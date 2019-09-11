@@ -1,13 +1,17 @@
 version: '3'
 
 services:
-  php-fpm:
+  php:
     build:
-      context: ./docker/php-fpm
+      context: ./docker/php
       dockerfile: Dockerfile
     # image: php:7.2-fpm
-    container_name: php-fpm
+    container_name: php
     restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./html:/usr/share/nginx/html:rw
     networks:
       - app-network
 
@@ -33,13 +37,17 @@ services:
       - "443:443"
     volumes:
       - ./html:/usr/share/nginx/html:rw
-      # - C:\workspace\ng_srv\nginx\conf.d:/etc/nginx/conf.d
-      - C:\workspace\ng_srv\nginx\sites:/etc/nginx/sites
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d
+      - ./docker/nginx/sites:/etc/nginx/sites
       # - certbot-etc:/etc/letsencrypt
       # - certbot-var:/var/lib/letsencrypt
+    links:
+      - php
     depends_on:
-      - php-fpm
+      - php
       - nodejs
+    networks:
+      - app-network
     
   # certbot:
   #   image: certbot/certbot
