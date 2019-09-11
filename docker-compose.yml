@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+  php-fpm:
+    build:
+      context: ./docker/php-fpm
+      dockerfile: Dockerfile
+    # image: php:7.2-fpm
+    container_name: php-fpm
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  nodejs:
+    build:
+      context: ./docker/nodejs
+      dockerfile: Dockerfile
+    # image: nodejs
+    container_name: nodejs
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  nginx:
+    # image: nginx
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./html:/usr/share/nginx/html:rw
+      # - C:\workspace\ng_srv\nginx\conf.d:/etc/nginx/conf.d
+      - C:\workspace\ng_srv\nginx\sites:/etc/nginx/sites
+      # - certbot-etc:/etc/letsencrypt
+      # - certbot-var:/var/lib/letsencrypt
+    depends_on:
+      - php-fpm
+      - nodejs
+    
+  # certbot:
+  #   image: certbot/certbot
+  #   container_name: certbot
+  #   volumes:
+  #     - C:\workspace\ng_srv:/var/www/html:rw
+  #     - certbot-etc:/etc/letsencrypt
+  #     - certbot-var:/var/lib/letsencrypt
+  #   depends_on:
+  #     - webserver
+  #   command: certonly --webroot --webroot-path=/var/www/html --email sammy@dev.tg --agree-tos --no-eff-email --staging -d dev.tg  -d www.dev.tg 
+  
+volumes:
+  # certbot-etc:
+  # certbot-var:
+  web-root:
+    driver: local
+    # driver_opts:
+    #   type: none
+    #   device: "C:\\workspace\\ng_srv"
+    #   o: bind
+
+networks:
+  app-network:
+    driver: bridge
