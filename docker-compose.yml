@@ -39,6 +39,7 @@ services:
       - ./html:/usr/share/nginx/html:rw
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d
       - ./docker/nginx/sites:/etc/nginx/sites
+      - ./docker/cert:/etc/ssl/certs
       # - certbot-etc:/etc/letsencrypt
       # - certbot-var:/var/lib/letsencrypt
     links:
