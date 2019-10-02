@@ -2,11 +2,6 @@ version: '3.7'
 
 services:
 
-  puppeteer:
-    image: buildkite/puppeteer
-    networks:
-      - app-network
-
   php:
     build:
       context: ./docker/php
@@ -17,8 +12,6 @@ services:
       - "9000:9000"
     volumes:
       - ./html:/usr/share/nginx/html:rw
-    depends_on: 
-      - puppeteer
     networks:
       - app-network
 

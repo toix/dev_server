@@ -9,6 +9,15 @@ RUN php -r "if (hash_file('sha384', 'composer-setup.php') === 'a5c698ffe4b8e849a
 RUN php composer-setup.php
 RUN php -r "unlink('composer-setup.php');"
 
+# https://github.com/Googlechrome/puppeteer/issues/290#issuecomment-322921352
+RUN apt-get update && \
+apt-get install -yq gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 \
+libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 \
+libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 \
+libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
+ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
+
+# oracle instant client
 RUN apt-get update && apt-get install -y unzip libaio-dev
 
 RUN cd /tmp && curl -L https://raw.github.com/adrianharabula/php7-with-oci8/master/instantclient/19.3.0.0.0/instantclient-basiclite-linux.x64-19.3.0.0.0dbru.zip -O
