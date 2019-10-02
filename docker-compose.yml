@@ -1,17 +1,24 @@
-version: '3'
+version: '3.7'
 
 services:
+
+  puppeteer:
+    image: buildkite/puppeteer
+    networks:
+      - app-network
+
   php:
     build:
       context: ./docker/php
       dockerfile: Dockerfile
-    # image: php:7.2-fpm
     container_name: php
     restart: unless-stopped
     ports:
       - "9000:9000"
     volumes:
       - ./html:/usr/share/nginx/html:rw
+    depends_on: 
+      - puppeteer
     networks:
       - app-network
 
@@ -19,14 +26,12 @@ services:
     build:
       context: ./docker/nodejs
       dockerfile: Dockerfile
-    # image: nodejs
     container_name: nodejs
     restart: unless-stopped
     networks:
       - app-network
 
   nginx:
-    # image: nginx
     build:
       context: ./docker/nginx
       dockerfile: Dockerfile
@@ -49,27 +54,9 @@ services:
       - nodejs
     networks:
       - app-network
-    
-  # certbot:
-  #   image: certbot/certbot
-  #   container_name: certbot
-  #   volumes:
-  #     - C:\workspace\ng_srv:/var/www/html:rw
-  #     - certbot-etc:/etc/letsencrypt
-  #     - certbot-var:/var/lib/letsencrypt
-  #   depends_on:
-  #     - webserver
-  #   command: certonly --webroot --webroot-path=/var/www/html --email sammy@dev.tg --agree-tos --no-eff-email --staging -d dev.tg  -d www.dev.tg 
-  
+
 volumes:
-  # certbot-etc:
-  # certbot-var:
-  web-root:
-    driver: local
-    # driver_opts:
-    #   type: none
-    #   device: "C:\\workspace\\ng_srv"
-    #   o: bind
+  shared-folder:
 
 networks:
   app-network:
